@@ -8,14 +8,27 @@
 
     <div class="flex-1 px-3 py-2">
       <nav class="space-y-1">
-        <NuxtLink v-for="r in routes" :key="r.href" :to="r.href">
-          <Button
-            variant="ghost"
+        <RouterLink
+          v-for="r in routes"
+          :key="r.href"
+          v-bind="$props"
+          :to="isConnected ? r.href : ''"
+          custom
+          v-slot="{ href, navigate }"
+        >
+          <a
+            v-bind="$attrs"
+            :href="isConnected ? href : undefined"
+            @click="navigate"
+            :role="isConnected ? 'none' : 'link'"
+            :aria-disabled="isConnected ? 'false' : 'true'"
           >
-            <component :is="r.icon" class="mr-2 h-5 w-5" />
-            {{ r.title }}
-          </Button>
-        </NuxtLink>
+            <Button variant="ghost" :disabled="!isConnected">
+              <component :is="r.icon" class="mr-2 h-5 w-5" />
+              {{ r.title }}
+            </Button>
+          </a>
+        </RouterLink>
       </nav>
     </div>
 
@@ -25,7 +38,7 @@
         <div>
           <p class="text-sm font-medium">Admin User</p>
           <p class="text-xs text-muted-foreground">
-            {{ address }}
+            {{ walletAddress }}
           </p>
         </div>
       </div>
@@ -34,26 +47,31 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { Button } from '@/components/ui/button'
-import { FileText, Vote } from 'lucide-vue-next'
+import { LayoutDashboard, Rocket } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
+import { abbreviateAddress } from '@/utils'
+import { useAccount } from '@wagmi/vue'
 
-const address = ref('No connected user')
+const { address, isConnected } = useAccount()
 
-// onMounted(() => {
-//   console.log(authorized.value)
-// })
+const walletAddress = computed(() =>
+  address.value
+    ? abbreviateAddress({ address: address.value })
+    : 'No connected user'
+)
 
 const routes = [
   {
-    href: '/stories',
-    icon: FileText,
+    href: '/',
+    icon: LayoutDashboard,
+    title: 'Dashboard'
+  },
+  {
+    href: '/deploy',
+    icon: Rocket,
     title: 'Deploy'
   }
-  // {
-  //   href: '/votes',
-  //   icon: Vote,
-  //   title: 'Votes'
-  // }
 ]
 </script>

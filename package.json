@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@reown/appkit": "^1.7.3",
+    "@reown/appkit-adapter-wagmi": "^1.7.3",
     "@tailwindcss/vite": "^4.1.4",
     "@tanstack/vue-query": "^5.74.6",
     "@vueuse/core": "^13.1.0",
