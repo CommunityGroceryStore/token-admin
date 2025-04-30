@@ -1,0 +1,54 @@
+name: Build erc20-admin docker image & deploy
+
+on:
+  push:
+    branches:
+      - main
+env:
+  IMAGE_NAME: erc20-admin
+
+jobs:
+  publish:
+    runs-on: self-hosted
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up environment variables
+        run: echo "NUXT_PUBLIC_COMMIT_HASH=${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" --build-arg NUXT_PUBLIC_COMMIT_HASH=${{ github.sha }}
+
+      - name: Push image
+        run: |
+          IMAGE_ID=$CONTAINER_REGISTRY_ADDR/${{ github.repository_owner }}/$IMAGE_NAME
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "main" ] && VERSION=stage
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          echo -e "{\"deploy\":\"$VERSION\",\"commit_sha\":\"${GITHUB_SHA}\"}" > deploy-vars.json
+
+          docker tag $IMAGE_NAME $IMAGE_ID:${GITHUB_SHA}
+          docker push $IMAGE_ID:${GITHUB_SHA}
+
+      - name: Deploy new version
+        run: |
+          echo -e "{ \"image_tag\":\"${{ github.sha }}\" }" > deploy-vars.json
+          levant render -var-file=deploy-vars.json -out runtime-stage.hcl operations/erc20-admin-stage.hcl
+          nomad job run runtime-stage.hcl
