@@ -1,30 +1,29 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
   <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <Account v-if="isConnected" />
+    <Connect v-else />
   </div>
-  <HelloWorld msg="Vite + Vue" />
+  <hr />
+  <div>
+    <DeployToken />
+    <DeployPresale v-if="tokenContractAddress" />
+    <DeployVesting v-if="tokenContractAddress" />
+  </div>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<script setup lang="ts">
+import { useAccount } from '@wagmi/vue'
+import { useStorage } from '@vueuse/core'
+
+import Account from './components/Account.vue'
+import Connect from './components/Connect.vue'
+import DeployToken from './components/DeployToken.vue'
+import DeployPresale from './components/DeployPresale.vue'
+import DeployVesting from './components/DeployVesting.vue'
+
+const { isConnected } = useAccount()
+const tokenContractAddress = useStorage(
+  'VITE_CGS_TOKEN_CONTRACT_ADDRESS',
+  import.meta.env.VITE_CGS_TOKEN_CONTRACT_ADDRESS
+)
+</script>
