@@ -1,11 +1,11 @@
-name: Build erc20-admin docker image & deploy
+name: Build token-admin docker image & deploy
 
 on:
   push:
     branches:
       - main
 env:
-  IMAGE_NAME: erc20-admin
+  IMAGE_NAME: token-admin
 
 jobs:
   publish:
