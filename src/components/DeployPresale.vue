@@ -3,7 +3,7 @@
     <div v-if="isConnected">
       <div v-if="presaleContractAddress">
         <p>
-          Presale Contract deployed at
+          ✔️ Presale Contract deployed at
           <strong><code>{{ presaleContractAddress }}</code></strong>
         </p>
       </div>
@@ -29,7 +29,7 @@
             v-model="presaleVestingCliffInSeconds"
           />
         </p>
-        <button @click="deployContract" :disabled="deploying">
+        🔘 <button @click="deployContract" :disabled="deploying">
           {{
             deploying
               ? 'Deploying Presale Contract...'
@@ -50,9 +50,13 @@ import { ethers } from 'ethers'
 import { useAccount, useConnectorClient } from '@wagmi/vue'
 import { useStorage } from '@vueuse/core'
 
-import CGSPresaleArtifact
-  from '@/assets/contract-artifacts/CGSTokenPresale.json'
 import { getSigner } from '@/utils/web3'
+import {
+  cgsTokenPresaleAbi
+} from '@/assets/contract-artifacts/wagmi-generated'
+import {
+  CGSTokenPresaleBytecode
+} from '@/assets/contract-artifacts/contract-bytecode'
 
 const { isConnected } = useAccount()
 const connectorClient = useConnectorClient()
@@ -83,8 +87,8 @@ const deployContract = async () => {
   deploying.value = true
   try {
     const factory = new ethers.ContractFactory(
-      CGSPresaleArtifact.abi,
-      CGSPresaleArtifact.bytecode
+      cgsTokenPresaleAbi,
+      CGSTokenPresaleBytecode
     )
     const contract = await factory.connect(signer).deploy(
       signer.address,

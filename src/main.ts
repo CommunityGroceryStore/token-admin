@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
-import './style.css'
+import '../src/assets/styles/monospaceweb-reset.css'
+import '../src/assets/styles/monospaceweb-index.css'
 import App from './App.vue'
 import { WagmiPlugin } from '@wagmi/vue'
 import { config } from '@/lib/wagmi/config'

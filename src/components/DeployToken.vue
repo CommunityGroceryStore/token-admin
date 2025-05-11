@@ -3,13 +3,13 @@
     <div v-if="isConnected">
       <div v-if="tokenContractAddress">
         <p>
-          Token Contract deployed at
+          ✔️ Token Contract deployed at
           <strong><code>{{ tokenContractAddress }}</code></strong>
         </p>
       </div>
       <div v-else>
         <p>Token Contract Address not found in config or localstorage</p>
-        <button @click="deployContract" :disabled="deploying">
+        🔘 <button @click="deployContract" :disabled="deploying">
           {{
             deploying
               ? 'Deploying Token Contract...'
@@ -30,8 +30,9 @@ import { ethers } from 'ethers'
 import { useAccount, useConnectorClient } from '@wagmi/vue'
 import { useStorage } from '@vueuse/core'
 
-import CGSTokenArtifact from '@/assets/contract-artifacts/CGSToken.json'
 import { getSigner } from '@/utils/web3'
+import { cgsTokenAbi } from '@/assets/contract-artifacts/wagmi-generated'
+import { CGSTokenBytecode } from '@/assets/contract-artifacts/contract-bytecode'
 
 const { isConnected } = useAccount()
 const connectorClient = useConnectorClient()
@@ -51,10 +52,7 @@ const deployContract = async () => {
 
   deploying.value = true
   try {
-    const factory = new ethers.ContractFactory(
-      CGSTokenArtifact.abi,
-      CGSTokenArtifact.bytecode
-    )
+    const factory = new ethers.ContractFactory(cgsTokenAbi, CGSTokenBytecode)
     const contract = await factory.connect(signer).deploy(
       signer.address,
       ethers.parseUnits('1000000000', 18)

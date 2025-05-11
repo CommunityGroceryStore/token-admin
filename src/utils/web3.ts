@@ -1,17 +1,29 @@
 import { BrowserProvider, JsonRpcSigner } from 'ethers'
 import { type UseConnectorClientReturnType } from '@wagmi/vue'
 
-export function getSigner(client: UseConnectorClientReturnType) {
+export function getProvider(client: UseConnectorClientReturnType) {
   if (!client.data.value) {
     return null
   }
-  const { account, chain, transport } = client.data.value
+  const { chain, transport } = client.data.value
   const network = {
     chainId: chain.id,
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   }
-  const provider = new BrowserProvider(transport, network)
+
+  return new BrowserProvider(transport, network)
+}
+
+export function getSigner(client: UseConnectorClientReturnType) {
+  if (!client.data.value) {
+    return null
+  }
+  const { account } = client.data.value
+  const provider = getProvider(client)
+  if (!provider) {
+    return null
+  }
 
   return new JsonRpcSigner(provider, account.address)
 }

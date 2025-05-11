@@ -1,5 +1,55 @@
-# Vue 3 + TypeScript + Vite
+# CommunityGroceryStore Token Admin
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Install
+```bash
+npm install
+```
+### Contract Type Dependencies
+From the
+[communitygrocerystore/contracts](https://github.com/communitygrocerystore/contracts)
+repository:
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+1) Generate ABI and bytecode artifacts:
+```bash
+npm install
+npx hardhat compile
+npx wagmi generate
+npx tsx scripts/copy-contract-bytecode.ts
+```
+2) Copy to assets folder `token-admin/src/contract-artifacts`:
+  - `contracts/artifacts/contract-bytecode.ts`
+  - `contracts/artifacts/wagmi-generates.ts`
+
+## Run Local Dev
+### 1) Run local Hardhat network
+From the
+[communitygrocerystore/contracts](https://github.com/communitygrocerystore/contracts)
+repository:
+```bash
+npx hardhat node --port 7545
+```
+Send some local Hardhat network ETH to your wallet for testing
+```bash
+TO=<your testing wallet address> \
+VALUE=<whole eth value> \
+npx hardhat --network localhost run scripts/send-eth-localhost.ts
+```
+
+### 2) Start local hot-reload dev server
+```bash
+npm run dev
+```
+
+
+
+## Build
+```bash
+npm run build
+```
+Serve the static build from the generated `dist` directory
+
+## Build & Run with Docker
+```bash
+docker pull ghcr.io/communitygrocerystore/token-admin:[[tag]]
+docker run --port 3000:3000 ghcr.io/communitygrocerystore/token-admin
+```

@@ -13,6 +13,7 @@ COPY --from=contracts \
   /usr/src/app/artifacts/contracts/Presale.sol/CGSTokenPresale.json \
   /usr/src/app/artifacts/contracts/Presale.sol/IVesting.json \
   /usr/src/app/artifacts/contracts/Vesting.sol/CGSVesting.json \
+  /usr/src/app/artifacts/wagmi-generated.ts \
   ./src/assets/contract-artifacts/
 RUN npm run build
 

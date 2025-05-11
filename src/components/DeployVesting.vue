@@ -3,13 +3,13 @@
     <div v-if="isConnected">
       <div v-if="vestingContractAddress">
         <p>
-          Vesting Contract deployed at
+          ✔️ Vesting Contract deployed at
           <strong><code>{{ vestingContractAddress }}</code></strong>
         </p>
       </div>
       <div v-else>
         <p>Vesting Contract Address not found in config or localstorage</p>
-        <button @click="deployContract" :disabled="deploying">
+        🔘 <button @click="deployContract" :disabled="deploying">
           {{
             deploying
               ? 'Deploying Vesting Contract...'
@@ -30,8 +30,11 @@ import { ethers } from 'ethers'
 import { useAccount, useConnectorClient } from '@wagmi/vue'
 import { useStorage } from '@vueuse/core'
 
-import CGSVestingArtifact from '@/assets/contract-artifacts/CGSVesting.json'
 import { getSigner } from '@/utils/web3'
+import { cgsVestingAbi } from '@/assets/contract-artifacts/wagmi-generated'
+import {
+  CGSVestingBytecode
+} from '@/assets/contract-artifacts/contract-bytecode'
 
 const { isConnected } = useAccount()
 const connectorClient = useConnectorClient()
@@ -60,8 +63,8 @@ const deployContract = async () => {
   deploying.value = true
   try {
     const factory = new ethers.ContractFactory(
-      CGSVestingArtifact.abi,
-      CGSVestingArtifact.bytecode
+      cgsVestingAbi,
+      CGSVestingBytecode
     )
     const contract = await factory.connect(signer).deploy(
       signer.address,
