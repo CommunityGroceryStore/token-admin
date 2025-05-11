@@ -28,19 +28,11 @@ repository:
 ```bash
 npx hardhat node --port 7545
 ```
-Send some local Hardhat network ETH to your wallet for testing
-```bash
-TO=<your testing wallet address> \
-VALUE=<whole eth value> \
-npx hardhat --network localhost run scripts/send-eth-localhost.ts
-```
 
 ### 2) Start local hot-reload dev server
 ```bash
 npm run dev
 ```
-
-
 
 ## Build
 ```bash
