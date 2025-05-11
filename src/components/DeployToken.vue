@@ -41,7 +41,6 @@ const tokenContractAddress = useStorage(
   'VITE_CGS_TOKEN_CONTRACT_ADDRESS',
   import.meta.env.VITE_CGS_TOKEN_CONTRACT_ADDRESS
 )
-const _signer = getSigner(connectorClient)
 const deployContract = async () => {
   if (!isConnected.value) { return }
   const signer = getSigner(connectorClient)
