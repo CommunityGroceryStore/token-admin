@@ -3,12 +3,12 @@
     <div v-if="isConnected">
       <div v-if="tokenContractAddress">
         <p>
-          ✔️ Token Contract deployed at
+          ✔️ $CGS Contract deployed at
           <strong><code>{{ tokenContractAddress }}</code></strong>
         </p>
       </div>
       <div v-else>
-        <p>Token Contract Address not found in config or localstorage</p>
+        <p>$CGS Contract Address not found in config or localstorage</p>
         🔘 <button @click="deployContract" :disabled="deploying">
           {{
             deploying
@@ -41,7 +41,7 @@ const tokenContractAddress = useStorage(
   'VITE_CGS_TOKEN_CONTRACT_ADDRESS',
   import.meta.env.VITE_CGS_TOKEN_CONTRACT_ADDRESS
 )
-
+const _signer = getSigner(connectorClient)
 const deployContract = async () => {
   if (!isConnected.value) { return }
   const signer = getSigner(connectorClient)

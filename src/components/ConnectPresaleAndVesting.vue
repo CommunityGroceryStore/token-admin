@@ -119,7 +119,6 @@ const {
   ],
   query: { enabled: !!presaleContractAddress.value }
 })
-
 const grantVestingAdminRoleToPresaleContract = async () => {
   if (!isConnected.value) { return }
   if (!presaleContractAddress.value) {

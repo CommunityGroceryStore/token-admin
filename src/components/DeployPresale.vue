@@ -17,6 +17,7 @@
           <input
             name="presaleVestingDurationInSeconds"
             v-model="presaleVestingDurationInSeconds"
+            :disabled="deploying"
           />
         </p>
         <p>
@@ -27,6 +28,7 @@
           <input
             name="presaleVestingCliffInSeconds"
             v-model="presaleVestingCliffInSeconds"
+            :disabled="deploying"
           />
         </p>
         🔘 <button @click="deployContract" :disabled="deploying">

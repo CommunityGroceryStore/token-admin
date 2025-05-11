@@ -3,13 +3,13 @@
     <div v-if="isConnected">
       <div v-if="usdcContractAddress">
         <p>
-          ✔️ USDC Contract deployed at
+          ✔️ $USDC Contract deployed at
           <strong><code>{{ usdcContractAddress }}</code></strong>
         </p>
       </div>
       <div v-else>
         <p>
-          USDC Contract Address not found in config or localstorage
+          $USDC Contract Address not found in config or localstorage
         </p>
         🔘 <button @click="deployMockStablecoin('USDC')" :disabled="deploying">
           {{
@@ -22,12 +22,12 @@
 
       <div v-if="usdtContractAddress">
         <p>
-          ✔️ USDT Contract deployed at
+          ✔️ $USDT Contract deployed at
           <strong><code>{{ usdtContractAddress }}</code></strong>
         </p>
       </div>
       <div v-else>
-        <p>USDT Contract Address not found in config or localstorage</p>
+        <p>$USDT Contract Address not found in config or localstorage</p>
         🔘 <button @click="deployMockStablecoin('USDT')" :disabled="deploying">
           {{
             deploying
