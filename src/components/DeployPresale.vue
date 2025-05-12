@@ -60,6 +60,9 @@ import {
   CGSTokenPresaleBytecode
 } from '@/assets/contract-artifacts/contract-bytecode'
 
+const { multisigAddress } = defineProps<{
+  multisigAddress: `0x${string}`
+}>()
 const { isConnected } = useAccount()
 const connectorClient = useConnectorClient()
 const deploying = ref(false)
@@ -71,6 +74,10 @@ const tokenContractAddress = useStorage(
   'VITE_CGS_TOKEN_CONTRACT_ADDRESS',
   import.meta.env.VITE_CGS_TOKEN_CONTRACT_ADDRESS
 )
+const vestingContractAddress = useStorage(
+  'VITE_CGS_VESTING_CONTRACT_ADDRESS',
+  import.meta.env.VITE_CGS_VESTING_CONTRACT_ADDRESS
+)
 const presaleVestingDurationInSeconds = ref(3600)
 const presaleVestingCliffInSeconds = ref(120)
 
@@ -78,6 +85,10 @@ const deployContract = async () => {
   if (!isConnected.value) { return }
   if (!tokenContractAddress.value) {
     console.error('No token contract address')
+    return
+  }
+  if (!vestingContractAddress.value) {
+    console.error('No vesting contract address')
     return
   }
   const signer = getSigner(connectorClient)
@@ -93,10 +104,11 @@ const deployContract = async () => {
       CGSTokenPresaleBytecode
     )
     const contract = await factory.connect(signer).deploy(
-      signer.address,
+      multisigAddress,
       tokenContractAddress.value,
       presaleVestingDurationInSeconds.value,
-      presaleVestingCliffInSeconds.value
+      presaleVestingCliffInSeconds.value,
+      vestingContractAddress.value
     )
     await contract.waitForDeployment()
     const deployedTokenContractAddress = await contract.getAddress()

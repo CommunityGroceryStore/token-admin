@@ -36,6 +36,9 @@ import {
   CGSVestingBytecode
 } from '@/assets/contract-artifacts/contract-bytecode'
 
+const { multisigAddress } = defineProps<{
+  multisigAddress: `0x${string}`
+}>()
 const { isConnected } = useAccount()
 const connectorClient = useConnectorClient()
 const deploying = ref(false)
@@ -67,7 +70,7 @@ const deployContract = async () => {
       CGSVestingBytecode
     )
     const contract = await factory.connect(signer).deploy(
-      signer.address,
+      multisigAddress,
       tokenContractAddress.value
     )
     await contract.waitForDeployment()

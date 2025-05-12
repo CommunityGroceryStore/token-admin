@@ -34,6 +34,9 @@ import { getSigner } from '@/utils/web3'
 import { cgsTokenAbi } from '@/assets/contract-artifacts/wagmi-generated'
 import { CGSTokenBytecode } from '@/assets/contract-artifacts/contract-bytecode'
 
+const { multisigAddress } = defineProps<{
+  multisigAddress: `0x${string}`
+}>()
 const { isConnected } = useAccount()
 const connectorClient = useConnectorClient()
 const deploying = ref(false)
@@ -53,7 +56,7 @@ const deployContract = async () => {
   try {
     const factory = new ethers.ContractFactory(cgsTokenAbi, CGSTokenBytecode)
     const contract = await factory.connect(signer).deploy(
-      signer.address,
+      multisigAddress,
       ethers.parseUnits('1000000000', 18)
     )
     await contract.waitForDeployment()
