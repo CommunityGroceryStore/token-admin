@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy:static": "rclone copy dist r2:$DEPLOY_BUCKET/"
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.75.7",
