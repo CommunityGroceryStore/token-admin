@@ -9,10 +9,7 @@ RUN apk add --no-cache python3 py3-pip make g++ curl unzip rclone
 RUN npm install
 COPY . .
 COPY --from=contracts \
-  /usr/src/app/artifacts/contracts/Token.sol/CGSToken.json \
-  /usr/src/app/artifacts/contracts/Presale.sol/CGSTokenPresale.json \
-  /usr/src/app/artifacts/contracts/Presale.sol/IVesting.json \
-  /usr/src/app/artifacts/contracts/Vesting.sol/CGSVesting.json \
+  /usr/src/app/artifacts/contract-bytecode.ts \
   /usr/src/app/artifacts/wagmi-generated.ts \
   /usr/src/app/src/assets/contract-artifacts/
 RUN npm run build
