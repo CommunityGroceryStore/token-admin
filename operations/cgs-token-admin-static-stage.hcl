@@ -13,7 +13,7 @@ job "cgs-token-admin-static-stage" {
       driver = "docker"
 
       config {
-        image = "ghcr.io/communitygrocerystore/token-admin:latest"
+        image = "ghcr.io/communitygrocerystore/token-admin:stage"
         force_pull = true
         entrypoint = ["npm"]
         command = "run"
