@@ -20,21 +20,21 @@
         </button>
       </div>
 
-      <div v-if="isPresaleContractAVestingAdmin">
+      <div v-if="isPresaleContractAVestingCreator">
         <p>
-          ✔️ Presale Contract is a Vesting Admin
+          ✔️ Presale Contract has Vesting Creator Role in Vesting Contract
         </p>
       </div>
       <div v-else>
         🔘
         <button
-          @click="grantVestingAdminRoleToPresaleContract()"
+          @click="grantVestingCreatorRoleToPresaleContract()"
           :disabled="deploying"
         >
           {{
             deploying
-              ? 'Granting Vesting Admin Role to Presale Contract...'
-              : 'Grant Vesting Admin Role to Presale Contract'
+              ? 'Granting Vesting Creator Role to Presale Contract...'
+              : 'Grant Vesting Creator Role to Presale Contract'
           }}
         </button>
       </div>
@@ -107,19 +107,19 @@ const setVestingContractAddressInPresaleContract = async () => {
 }
 
 const {
-  data: isPresaleContractAVestingAdmin,
-  refetch: refetchIsPresaleContractAVestingAdmin
+  data: isPresaleContractAVestingCreator,
+  refetch: refetchIsPresaleContractAVestingCreator
 } = useReadContract({
   address: vestingContractAddress.value as `0x${string}`,
   abi: cgsVestingAbi,
   functionName: 'hasRole' as const,
   args: [
-    ethers.id('VESTING_ADMIN_ROLE') as `0x${string}`,
+    ethers.id('VESTING_CREATOR_ROLE') as `0x${string}`,
     presaleContractAddress.value as `0x${string}`
   ],
   query: { enabled: !!presaleContractAddress.value }
 })
-const grantVestingAdminRoleToPresaleContract = async () => {
+const grantVestingCreatorRoleToPresaleContract = async () => {
   if (!isConnected.value) { return }
   if (!presaleContractAddress.value) {
     console.error('No presale contract address')
@@ -136,17 +136,17 @@ const grantVestingAdminRoleToPresaleContract = async () => {
       abi: cgsVestingAbi,
       functionName: 'grantRole' as const,
       args: [
-        ethers.id('VESTING_ADMIN_ROLE') as `0x${string}`,
+        ethers.id('VESTING_CREATOR_ROLE') as `0x${string}`,
         presaleContractAddress.value as `0x${string}`
       ]
     })
   } catch (err) {
     console.error(
-      'Error granting vesting admin role to presale contract',
+      'Error granting VESTING_CREATOR_ROLE to presale contract',
       err
     )
   } finally {
-    await refetchIsPresaleContractAVestingAdmin()
+    await refetchIsPresaleContractAVestingCreator()
     deploying.value = false
   }
 }

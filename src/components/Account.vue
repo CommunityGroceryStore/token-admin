@@ -8,18 +8,14 @@
   </p>
   <p v-if="balance">
     You have <strong><code>{{
-      (
-        balance.value / 1_000_000_000_000_000_000n
-      ).toLocaleString(undefined, { minimumFractionDigits: 2 })
+      ethers.formatEther(balance.value)
     }}</code></strong>
     Ethereum available.
   </p>
-  <p v-if="userTokenBalance">
+  <p v-if="userTokenBalance || userTokenBalance === 0n">
     You have
     <strong><code>{{
-      (
-        userTokenBalance / 1_000_000_000_000_000_000n
-      ).toLocaleString(undefined, { minimumFractionDigits: 2 })
+      ethers.formatEther(userTokenBalance)
     }}</code></strong>
     $CGS Tokens available.
   </p>
@@ -43,6 +39,7 @@ import {
 import { useStorage } from '@vueuse/core'
 import { cgsTokenAbi } from '@/assets/contract-artifacts/wagmi-generated'
 import { localhost } from '@/lib/wagmi/config'
+import { ethers } from 'ethers'
 
 const { address, connector } = useAccount()
 const { disconnect } = useDisconnect()
@@ -56,7 +53,9 @@ const currentChain = computed(() => {
   return chains.value.find((chain) => chain.id === chainId.value)
 })
 const { data: balance } = useBalance({ address })
-const { data: userTokenBalance } = useReadContract({
+const {
+  data: userTokenBalance
+} = useReadContract({
   address: tokenContractAddress.value as `0x${string}`,
   abi: cgsTokenAbi,
   functionName: 'balanceOf' as const,
@@ -85,6 +84,10 @@ const resetLocalDevDeployment = async () => {
     useStorage(
       'VITE_USDT_CONTRACT_ADDRESS',
       import.meta.env.VITE_USDT_CONTRACT_ADDRESS
+    ).value = ''
+    useStorage(
+      'VITE_CGS_MULTISIG_ADDRESS',
+      import.meta.env.VITE_CGS_MULTISIG_ADDRESS
     ).value = ''
   }
 }

@@ -1,178 +1,49 @@
 <template>
-  <section>
-    <Account v-if="isConnected" />
-    <Connect v-else />
-  </section>
+  <header>
+    <a href="#" @click="page = 'home'">Deploy</a>
+    |
+    <a href="#" @click="page = 'token'">Token</a>
+    |
+    <a href="#" @click="page = 'vesting'">Vesting</a>
+    |
+    <a href="#" @click="page = 'presale'">Presale</a>
+    <br />
+    <section>
+      <Account v-if="isConnected" />
+      <Connect v-else />
+    </section>
+  </header>
   <hr />
-  <section v-if="isConnected">
-    <label for="multisigAddress">
-      Multisig Address
-    </label>
-    <input
-      name="multisigAddress"
-      v-model="multisigAddress"
-      :disabled="!!tokenContractAddress && isValidMultisigAddress"
-    />
-  </section>
-  <section v-if="isConnected && isValidMultisigAddress">
-    <DeployToken :multisigAddress="multisigAddress" />
-    <template v-if="tokenContractAddress">
-      <DeployMockStablecoins
-        v-if="chainId === localhost.id || chainId === sepolia.id"
-      />
-      <DeployVesting :multisigAddress="multisigAddress" />
-      <DeployPresale
-        v-if="vestingContractAddress"
-        :multisigAddress="multisigAddress"
-      />
-    </template>
-    <template
-      v-if="
-        tokenContractAddress &&
-          vestingContractAddress &&
-          presaleContractAddress
-      "
-    >
-      <ConnectPresaleAndVesting />
-      <AddPresalePaymentTokens />
-      <SendTokensToPresale />      
-    </template>
-
-    <CheckDefaultAdminRole
-      v-if="address && tokenContractAddress"
-      :checkAddress="address"
-      :contractAddress="tokenContractAddress"
-      contractName="Token"
-    />
-
-    <CheckDefaultAdminRole
-      v-if="address && vestingContractAddress"
-      :checkAddress="address"
-      :contractAddress="vestingContractAddress"
-      contractName="Vesting"
-    />
-
-    <CheckDefaultAdminRole
-      v-if="address && presaleContractAddress"
-      :checkAddress="address"
-      :contractAddress="presaleContractAddress"
-      contractName="Presale"
-    />
-
-    <p
-      v-if="
-        tokenContractAddress &&
-          presaleContractAddress &&
-          vestingContractAddress &&
-          usdcContractAddress && usdcRate &&
-          usdtContractAddress && usdtRate &&
-          isVestingContractAddressSetInPresaleContract &&
-          !!isPresaleContractAVestingAdmin &&
-          presaleContractTokenBalance
-      "
-    >
-      🎉 Presale is ready to start!
-    </p>
-  </section>
+  <main>
+    <section v-if="page === 'home'">
+      <DeployFlow />
+    </section>
+    <section v-else-if="page === 'token'">
+      <TokenManagement />
+    </section>
+    <section v-else-if="page === 'vesting'">
+      <VestingManagement />
+    </section>
+    <section v-else-if="page === 'presale'">
+      <PresaleManagement />
+    </section>
+    <section v-else>
+      <h1>404</h1>
+    </section>
+  </main>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useAccount, useChainId, useReadContract } from '@wagmi/vue'
-import { useStorage } from '@vueuse/core'
-import { sepolia } from '@wagmi/vue/chains'
-import { ethers } from 'ethers'
+import { ref } from 'vue'
+import { useAccount } from '@wagmi/vue'
 
-import { localhost } from '@/lib/wagmi/config'
 import Account from '@/components/Account.vue'
 import Connect from '@/components/Connect.vue'
-import DeployToken from '@/components/DeployToken.vue'
-import DeployPresale from '@/components/DeployPresale.vue'
-import DeployVesting from '@/components/DeployVesting.vue'
-import ConnectPresaleAndVesting from '@/components/ConnectPresaleAndVesting.vue'
-import DeployMockStablecoins from '@/components/DeployMockStablecoins.vue'
-import SendTokensToPresale from '@/components/SendTokensToPresale.vue'
-import AddPresalePaymentTokens from '@/components/AddPresalePaymentTokens.vue'
-import CheckDefaultAdminRole from '@/components/CheckDefaultAdminRole.vue'
-import {
-  cgsTokenAbi,
-  cgsTokenPresaleAbi,
-  cgsVestingAbi
-} from '@/assets/contract-artifacts/wagmi-generated'
+import DeployFlow from '@/components/DeployFlow.vue'
+import TokenManagement from '@/components/TokenManagement.vue'
+import VestingManagement from '@/components/VestingManagement.vue'
+import PresaleManagement from '@/components/PresaleManagement.vue'
 
-const { address, isConnected } = useAccount()
-const chainId = useChainId()
-const multisigAddress = useStorage(
-  'VITE_CGS_MULTISIG_ADDRESS',
-  import.meta.env.VITE_CGS_MULTISIG_ADDRESS
-)
-const tokenContractAddress = useStorage<`0x${string}`>(
-  'VITE_CGS_TOKEN_CONTRACT_ADDRESS',
-  import.meta.env.VITE_CGS_TOKEN_CONTRACT_ADDRESS as `0x${string}`
-)
-const presaleContractAddress = useStorage<`0x${string}`>(
-  'VITE_CGS_PRESALE_CONTRACT_ADDRESS',
-  import.meta.env.VITE_CGS_PRESALE_CONTRACT_ADDRESS as `0x${string}`
-)
-const vestingContractAddress = useStorage<`0x${string}`>(
-  'VITE_CGS_VESTING_CONTRACT_ADDRESS',
-  import.meta.env.VITE_CGS_VESTING_CONTRACT_ADDRESS as `0x${string}`
-)
-const usdcContractAddress = useStorage<`0x${string}`>(
-  'VITE_USDC_CONTRACT_ADDRESS',
-  import.meta.env.VITE_USDC_CONTRACT_ADDRESS as `0x${string}`
-)
-const usdtContractAddress = useStorage<`0x${string}`>(
-  'VITE_USDT_CONTRACT_ADDRESS',
-  import.meta.env.VITE_USDT_CONTRACT_ADDRESS as `0x${string}`
-)
-const isValidMultisigAddress = computed(() => {
-  if (!multisigAddress.value) { return false }
-  return ethers.isAddress(multisigAddress.value)
-})
-const { data: usdcRate } = useReadContract({
-  address: presaleContractAddress.value,
-  abi: cgsTokenPresaleAbi,
-  functionName: 'paymentTokenRates' as const,
-  args: [ usdcContractAddress.value ],
-  query: { enabled: computed(() => !!usdcContractAddress.value) }
-})
-const { data: usdtRate } = useReadContract({
-  address: presaleContractAddress.value,
-  abi: cgsTokenPresaleAbi,
-  functionName: 'paymentTokenRates' as const,
-  args: [ usdtContractAddress.value ],
-  query: { enabled: computed(() => !!usdtContractAddress.value) }
-})
-const {
-  data: isVestingContractAddressSetInPresaleContract
-} = useReadContract({
-  address: presaleContractAddress.value,
-  abi: cgsTokenPresaleAbi,
-  functionName: 'vestingContractAddress' as const,
-  query: { enabled: computed(() => !!presaleContractAddress.value) }
-})
-const {
-  data: isPresaleContractAVestingAdmin
-} = useReadContract({
-  address: vestingContractAddress.value,
-  abi: cgsVestingAbi,
-  functionName: 'hasRole' as const,
-  args: [
-    ethers.id('VESTING_ADMIN_ROLE') as `0x${string}`,
-    presaleContractAddress.value
-  ],
-  query: { enabled: computed(() => !!presaleContractAddress.value) }
-})
-const {
-  data: presaleContractTokenBalance
-} = useReadContract({
-  address: tokenContractAddress.value,
-  abi: cgsTokenAbi,
-  functionName: 'balanceOf' as const,
-  args: [ presaleContractAddress.value ],
-  query: {
-    enabled: computed(() => !!tokenContractAddress.value && !!presaleContractAddress.value)
-  }
-})
+const page = ref('home')
+const { isConnected } = useAccount()
 </script>
