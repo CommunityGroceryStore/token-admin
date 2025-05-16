@@ -15,9 +15,9 @@ job "cgs-token-admin-static-stage" {
       config {
         image = "ghcr.io/communitygrocerystore/token-admin:stage"
         force_pull = true
-        entrypoint = ["npm"]
-        command = "run"
-        args = ["deploy:static"]
+        entrypoint = ["rclone"]
+        command = "copy"
+        args = ["dist", "r2:${DEPLOY_BUCKET}/"]
         mount {
           type = "bind"
           source = "secrets/rclone.conf"
