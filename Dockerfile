@@ -12,4 +12,3 @@ COPY --from=contracts \
   /usr/src/app/artifacts/contract-bytecode.ts \
   /usr/src/app/artifacts/wagmi-generated.ts \
   /usr/src/app/src/assets/contract-artifacts/
-RUN npm run build

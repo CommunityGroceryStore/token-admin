@@ -15,15 +15,20 @@ job "cgs-token-admin-static-stage" {
       config {
         image = "ghcr.io/communitygrocerystore/token-admin:stage"
         force_pull = true
-        entrypoint = ["rclone"]
-        command = "copy"
-        args = ["dist", "r2:${DEPLOY_BUCKET}/"]
+        entrypoint = ["/workdir/entrypoint.sh"]
+        mount {
+          type = "bind"
+          source = "local/entrypoint.sh"
+          target = "/workdir/entrypoint.sh"
+          readonly = true
+        }
         mount {
           type = "bind"
           source = "secrets/rclone.conf"
           target = "/root/.config/rclone/rclone.conf"
           readonly = true
         }
+
       }
 
       restart {
@@ -69,6 +74,20 @@ job "cgs-token-admin-static-stage" {
         {{ end }}
         EOF
         destination = "secrets/rclone.conf"
+      }
+
+      template {
+        data = <<-EOF
+        #!/bin/sh
+
+        echo "Building token-admin static files"
+        npm run build
+
+        echo "Copying token-admin static files to cloudflare r2"
+        rclone copy dist r2:${DEPLOY_BUCKET}/
+        EOF
+        destination = "local/entrypoint.sh"
+        perms = "0755"
       }
     }
   }
