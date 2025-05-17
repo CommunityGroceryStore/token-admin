@@ -28,7 +28,6 @@ job "cgs-token-admin-static-stage" {
           target = "/root/.config/rclone/rclone.conf"
           readonly = true
         }
-
       }
 
       restart {
@@ -83,8 +82,8 @@ job "cgs-token-admin-static-stage" {
         echo "Building token-admin static files"
         npm run build
 
-        echo "Copying token-admin static files to cloudflare r2"
-        rclone copy dist r2:${DEPLOY_BUCKET}/
+        echo "Syncing token-admin static files to cloudflare r2"
+        rclone sync dist r2:${DEPLOY_BUCKET}/
         EOF
         destination = "local/entrypoint.sh"
         perms = "0755"
