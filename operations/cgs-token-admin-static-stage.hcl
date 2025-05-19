@@ -50,19 +50,6 @@ job "cgs-token-admin-static-stage" {
 
       template {
         data = <<-EOF
-        {{ with secret "kv/cgs/cloudflare/cgs-deployer" }}
-        CLOUDFLARE_API_TOKEN="{{ .Data.data.TOKEN }}"
-        ACCESS_KEY_ID="{{ .Data.data.ACCESS_KEY_ID }}"
-        SECRET_ACCESS_KEY="{{ .Data.data.SECRET_ACCESS_KEY }}"
-        ENDPOINT="{{ .Data.data.ENDPOINT }}"
-        {{ end }}
-        EOF
-        destination = "secrets/file.env"
-        env         = true
-      }
-
-      template {
-        data = <<-EOF
         {{ with secret "kv/cgs/cloudflare/cgs-deployer" }}[r2]
         type = s3
         provider = Cloudflare
