@@ -1,10 +1,8 @@
 job "cgs-token-admin-static-stage" {
-  datacenters = ["mb-hel"]
+  datacenters = [ "mb-hel" ]
   type = "batch"
 
-  reschedule {
-    attempts = 0
-  }
+  reschedule { attempts = 0 }
 
   group "cgs-token-admin-static-stage-group" {
     count = 1
@@ -15,7 +13,7 @@ job "cgs-token-admin-static-stage" {
       config {
         image = "ghcr.io/communitygrocerystore/token-admin:stage"
         force_pull = true
-        entrypoint = ["/workdir/entrypoint.sh"]
+        entrypoint = [ "/workdir/entrypoint.sh" ]
         mount {
           type = "bind"
           source = "local/entrypoint.sh"
