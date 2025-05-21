@@ -41,7 +41,7 @@ job "cgs-token-admin-static-stage" {
       env {
         PHASE = "stage"
         DEPLOY_BUCKET = "token-admin-staging-communitygrocerystore-com"
-        VITE_EVM_NETWORK="sepolia"
+        VITE_EVM_NETWORK = "sepolia"
       }
 
       vault { policies = [ "cgs-deployer" ] }
