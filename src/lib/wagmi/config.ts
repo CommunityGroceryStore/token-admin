@@ -17,11 +17,11 @@ export const localhost = defineChain({
   nativeCurrency: {
     decimals: 18,
     name: 'Ether',
-    symbol: 'ETH',
+    symbol: 'ETH'
   },
   rpcUrls: {
-    default: { http: ['http://127.0.0.1:7545'] },
-  },
+    default: { http: ['http://127.0.0.1:7545'] }
+  }
 })
 
 export const config = import.meta.env.VITE_EVM_NETWORK === 'mainnet'

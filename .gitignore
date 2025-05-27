@@ -23,4 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
+# Local env files
+.env
+.env.*
+!.env.example
+
 src/assets/contract-artifacts/**
+!src/assets/contract-artifacts/.gitkeep

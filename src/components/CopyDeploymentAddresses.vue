@@ -4,12 +4,12 @@
     Copy & paste the following to the dev so we don't have to find them again:
   </p>
   <code>
-    VITE_CGS_TOKEN_CONTRACT_ADDRESS={{ tokenContractAddress }}
-    VITE_CGS_PRESALE_CONTRACT_ADDRESS={{ presaleContractAddress }}
-    VITE_CGS_VESTING_CONTRACT_ADDRESS={{ vestingContractAddress }}
-    VITE_USDC_CONTRACT_ADDRESS={{ usdcContractAddress }}
-    VITE_USDT_CONTRACT_ADDRESS={{ usdtContractAddress }}
-    VITE_CGS_MULTISIG_ADDRESS={{ multisigAddress }}
+    VITE_CGS_TOKEN_CONTRACT_ADDRESS={{ tokenContractAddress }}<br />
+    VITE_CGS_PRESALE_CONTRACT_ADDRESS={{ presaleContractAddress }}<br />
+    VITE_CGS_VESTING_CONTRACT_ADDRESS={{ vestingContractAddress }}<br />
+    VITE_USDC_CONTRACT_ADDRESS={{ usdcContractAddress }}<br />
+    VITE_USDT_CONTRACT_ADDRESS={{ usdtContractAddress }}<br />
+    VITE_CGS_MULTISIG_ADDRESS={{ multisigAddress }}<br />
   </code>
 </template>
 
