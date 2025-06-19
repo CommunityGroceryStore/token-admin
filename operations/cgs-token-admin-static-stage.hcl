@@ -42,6 +42,10 @@ job "cgs-token-admin-static-stage" {
         PHASE = "stage"
         DEPLOY_BUCKET = "token-admin-staging-communitygrocerystore-com"
         VITE_EVM_NETWORK = "sepolia"
+        VITE_CGS_TOKEN_CONTRACT_ADDRESS="0x869c745a364fD9D74a6c1907A184C5E14a35abd3"
+        VITE_USDC_CONTRACT_ADDRESS="0x2B3FAD429a904457758E7ec5b78fcaDDD8DE0c52"
+        VITE_USDT_CONTRACT_ADDRESS="0x008E6A8EA0D44FAB8Aa620278A0a0e99a99B6DC4"
+        VITE_CGS_MULTISIG_ADDRESS="0x98565Bee746Fc9ab8388e635E65f75e932d8C558"
       }
 
       vault { policies = [ "cgs-deployer" ] }
